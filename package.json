@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "vite build && tsc --project tsconfig.build.json",
     "typecheck": "tsc --noEmit",
