@@ -2,11 +2,12 @@
   "name": "use-onclickoutside",
   "version": "0.0.0",
   "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build": "vite build && tsc --project tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run typecheck",
+    "lint": "eslint ."
   },
   "peerDependencies": {
     "react": ">=16.8",
@@ -25,6 +26,22 @@
     "prettier": "3.7.4",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
-  }
+    "vite": "^7.2.4",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "keywords": [
+    "react",
+    "hook",
+    "onclickoutside",
+    "useonclickoutside",
+    "clickoutside",
+    "outsideclick",
+    "useref"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pxlmvr/use-onclickoutside.git"
+  },
+  "author": "Matteo Losi",
+  "license": "MIT"
 }
