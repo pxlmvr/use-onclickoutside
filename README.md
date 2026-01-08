@@ -1,73 +1,97 @@
-# React + TypeScript + Vite
+# use-on-click-outside
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small, focused React hook that triggers a callback when a mouse or touch interaction occurs outside a specified element.
 
-Currently, two official plugins are available:
+Designed to be:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ✅ TypeScript-first
+- ✅ Lightweight (no dependencies besides React)
+- ✅ Safe to use across modals, dropdowns, popovers, etc.
+- ✅ Compatible with React 16.8+ (hooks)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Installation
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install use-on-click-outside
+# or
+yarn add use-on-click-outside
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Basic Example
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```tsx
+import { useRef } from 'react'
+import { useOnClickOutside } from 'use-on-click-outside'
+
+function Dropdown() {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useOnClickOutside(ref, () => {
+    console.log('Clicked outside')
+  })
+
+  return <div ref={ref}>Dropdown content</div>
+}
 ```
+
+### With allowed elements
+
+You can provide additional refs that should be treated as “inside” clicks and therefore not trigger the callback:
+
+```tsx
+const containerRef = useRef<HTMLDivElement>(null)
+const buttonRef = useRef<HTMLButtonElement>(null)
+
+useOnClickOutside(containerRef, () => {
+  setOpen(false)
+}, [buttonRef])
+```
+
+## API
+
+### `useOnClickOutside`
+
+```ts
+useOnClickOutside(
+  ref: RefObject<HTMLElement | null>,
+  handler: (event: MouseEvent | TouchEvent) => void,
+  allowedNodes?: RefObject<HTMLElement | null>[]
+): void
+```
+
+### Parameters
+
+- `ref`: A React ref object pointing to the element you want to detect outside clicks for.
+- `handler`: A callback function that gets called when a click or touch event occurs outside the referenced element.
+- `allowedNodes` (optional): An array of React ref objects that should be considered as inside clicks and excluded from triggering the handler.
+
+## Exclusion rules
+
+The handler will not be called if:
+
+- The event target is inside `ref`
+- The event target is inside any `allowedNodes`
+- The event target has the CSS class:
+
+```css
+__exclude-click-outside__
+```
+
+## Events
+
+The hook listens for the following events:
+
+- `mousedown`
+- `touchstart`
+
+This ensures consistent behavior across mouse and touch devices.
+
+## React compatibility
+
+- React 16.8+
+
+React is listed as a peer dependency, no duplicate React instances are bundled.
