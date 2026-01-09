@@ -1,0 +1,6 @@
+.prettierrc
+.prettierignore
+eslint.config.js
+tsconfig.build.json
+tsconfig.json
+viteconfig.ts
